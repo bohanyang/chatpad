@@ -1,8 +1,9 @@
 import { encode } from "gpt-token-utils";
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import { OpenAIExt } from "openai-ext";
 import { db } from "../db";
 import { config } from "./config";
+import { ChatCompletionMessageParam } from "openai/resources"
 
 function getClient(
   apiKey: string,
@@ -10,19 +11,15 @@ function getClient(
   apiAuth: string,
   basePath: string
 ) {
-  const configuration = new Configuration({
-    ...((apiType === "openai" ||
-      (apiType === "custom" && apiAuth === "bearer-token")) && {
-      apiKey: apiKey,
-    }),
-    ...(apiType === "custom" && { basePath: basePath }),
+  return new OpenAI({
+    apiKey: apiKey,
+    baseURL: basePath === '' ? undefined : basePath,
   });
-  return new OpenAIApi(configuration);
 }
 
 export async function createStreamChatCompletion(
   apiKey: string,
-  messages: ChatCompletionRequestMessage[],
+  messages: ChatCompletionMessageParam[],
   chatId: string,
   messageId: string
 ) {
@@ -74,7 +71,7 @@ function setTotalTokens(chatId: string, content: string) {
 
 export async function createChatCompletion(
   apiKey: string,
-  messages: ChatCompletionRequestMessage[]
+  messages: ChatCompletionMessageParam[]
 ) {
   const settings = await db.settings.get("general");
   const model = settings?.openAiModel ?? config.defaultModel;
@@ -84,7 +81,7 @@ export async function createChatCompletion(
   const version = settings?.openAiApiVersion ?? config.defaultVersion;
 
   const client = getClient(apiKey, type, auth, base);
-  return client.createChatCompletion(
+  return client.chat.completions.create(
     {
       model,
       stream: false,
@@ -95,7 +92,7 @@ export async function createChatCompletion(
         "Content-Type": "application/json",
         ...(type === "custom" && auth === "api-key" && { "api-key": apiKey }),
       },
-      params: {
+      query: {
         ...(type === "custom" && { "api-version": version }),
       },
     }

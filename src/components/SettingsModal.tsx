@@ -82,7 +82,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",
@@ -148,7 +148,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",
@@ -184,7 +184,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",
@@ -224,7 +224,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",
@@ -260,7 +260,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",
@@ -308,7 +308,7 @@ export function SettingsModal({ children }: { children: ReactElement }) {
                     message: "No internet connection.",
                   });
                 }
-                const message = error.response?.data?.error?.message;
+                const message = error.response?.error?.message;
                 if (message) {
                   notifications.show({
                     title: "Error",

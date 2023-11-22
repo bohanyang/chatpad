@@ -44,7 +44,7 @@ export function EditChatModal({
                   message: "No internet connection.",
                 });
               }
-              const message = error.response?.data?.error?.message;
+              const message = error.response?.error?.message;
               if (message) {
                 notifications.show({
                   title: "Error",

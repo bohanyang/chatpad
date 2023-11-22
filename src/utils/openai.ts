@@ -1,6 +1,5 @@
 import { encode } from "gpt-token-utils";
 import OpenAI from "openai";
-import { OpenAIExt } from "openai-ext";
 import { db } from "../db";
 import { config } from "./config";
 import { ChatCompletionMessageParam } from "openai/resources"
@@ -14,6 +13,7 @@ function getClient(
   return new OpenAI({
     apiKey: apiKey,
     baseURL: basePath === '' ? undefined : basePath,
+    dangerouslyAllowBrowser: true,
   });
 }
 
@@ -25,28 +25,32 @@ export async function createStreamChatCompletion(
 ) {
   const settings = await db.settings.get("general");
   const model = settings?.openAiModel ?? config.defaultModel;
+  const type = settings?.openAiApiType ?? config.defaultType;
+  const auth = settings?.openAiApiAuth ?? config.defaultAuth;
+  const base = settings?.openAiApiBase ?? config.defaultBase;
+  const version = settings?.openAiApiVersion ?? config.defaultVersion;
 
-  return OpenAIExt.streamClientChatCompletion(
+  const client = getClient(apiKey, type, auth, base);
+  return client.beta.chat.completions.stream(
     {
       model,
       messages,
     },
     {
-      apiKey: apiKey,
-      handler: {
-        onContent(content, isFinal, stream) {
-          setStreamContent(messageId, content, isFinal);
-          if (isFinal) {
-            setTotalTokens(chatId, content);
-          }
-        },
-        onDone(stream) {},
-        onError(error, stream) {
-          console.error(error);
-        },
+      headers: {
+        "Content-Type": "application/json",
+        ...(type === "custom" && auth === "api-key" && { "api-key": apiKey }),
       },
-    }
-  );
+      query: {
+        ...(type === "custom" && version && { "api-version": version }),
+      },
+    },
+  ).on('content', (delta: string, snapshot: string) => {
+    setStreamContent(messageId, snapshot, false);
+  }).on('finalContent', (contentSnapshot: string) => {
+    setStreamContent(messageId, contentSnapshot, true);
+    setTotalTokens(chatId, contentSnapshot);
+  });
 }
 
 function setStreamContent(
@@ -93,7 +97,7 @@ export async function createChatCompletion(
         ...(type === "custom" && auth === "api-key" && { "api-key": apiKey }),
       },
       query: {
-        ...(type === "custom" && { "api-version": version }),
+        ...(type === "custom" && version && { "api-version": version }),
       },
     }
   );

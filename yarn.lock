@@ -4102,11 +4102,6 @@ open@^9.1.0:
     is-inside-container "^1.0.0"
     is-wsl "^2.2.0"
 
-openai-ext@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/openai-ext/-/openai-ext-1.2.6.tgz#7b98dd60621b2d28eb9f6a1cf05356d528f9d179"
-  integrity sha512-bva4Ql5G1lwBGeIBu0vI3mI9FeTyW/l2b7cq5kdEYasujzSAQxxqN9rPi4lSvjNuKofp3C0ravUMdTZkUtKlxw==
-
 openai@4:
   version "4.19.1"
   resolved "https://registry.yarnpkg.com/openai/-/openai-4.19.1.tgz#229d6e994248966f255f6a5b849dcec28e3b3439"

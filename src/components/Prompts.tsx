@@ -112,7 +112,7 @@ export function Prompts({
                   ]);
 
                   const resultDescription =
-                    result.data.choices[0].message?.content;
+                    result.choices[0].message?.content;
                   await db.messages.add({
                     id: nanoid(),
                     chatId: id,
@@ -121,12 +121,12 @@ export function Prompts({
                     createdAt: new Date(),
                   });
 
-                  if (result.data.usage) {
+                  if (result.usage) {
                     await db.chats.where({ id: id }).modify((chat) => {
                       if (chat.totalTokens) {
-                        chat.totalTokens += result.data.usage!.total_tokens;
+                        chat.totalTokens += result.usage!.total_tokens;
                       } else {
-                        chat.totalTokens = result.data.usage!.total_tokens;
+                        chat.totalTokens = result.usage!.total_tokens;
                       }
                     });
                   }
